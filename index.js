@@ -41,13 +41,13 @@ const init = () => {
 };
 
 const viewDepartments = async () => {
-    const departments = await pool.query('SELECT * FROM department;');
+    const departments = await pool.query('SELECT id, name AS department FROM department;');
     console.table(departments.rows);
     proceed();
 };
 
 const viewRoles = async () => {
-    const roles = await pool.query(`${query} SELECT role.id, role.title, role.salary, department.name AS department FROM role JOIN department ON role.department_id = department.id;`);
+    const roles = await pool.query(`SELECT role.id, role.title, role.salary, department.name AS department FROM role JOIN department ON role.department_id = department.id;`);
     console.table(roles.rows)
     proceed();
 };
@@ -69,7 +69,7 @@ const addDepartment = async () => {
         }
     ])
         .then((response) => {
-        pool.query('INSERT INTO department (name) VALUES ($1);', [response.name]);
+        pool.query(`INSERT INTO department (name) VALUES ($1);`, [response.name]);
         console.log(`Department: ${response.name} added.`)
         proceed();
     });
@@ -78,7 +78,10 @@ const addDepartment = async () => {
 const addRole = async () => {
     const departments = (await pool.query('SELECT * From department;')).rows
     const dptArray = departments.map((i) => i.name)
-
+    if (!dptArray) {
+        console.log('there are no departments to add this role to')
+        proceed()}
+    else {
     await inquirer
         .prompt([
         {
@@ -100,10 +103,10 @@ const addRole = async () => {
     ])
         .then((response) => {
         const index = departments.findIndex((element) => element.name === response.department)
-        pool.query('INSERT INTO role (title, salary, department_id) VALUES ($1, $2, $3);', [response.title, response.salary, departments[index].id]);
+        pool.query(`INSERT INTO role (title, salary, department_id) VALUES ($1, $2, $3);`, [response.title, response.salary, departments[index].id]);
         console.log(`Role: ${response.title} added.`)
         proceed();
-    });
+    })};
 };
 
 const addEmployee = async () => {
@@ -115,7 +118,11 @@ const addEmployee = async () => {
             if (!employee.manager_id)
             {managersArray.push(`${employee.first_name} ${employee.last_name}`)}
         }
-
+    if (!rolesArray) {
+        console.log(`There are no roles to assign to this employee`)
+        proceed()
+    }
+    else {
     await inquirer
         .prompt([
         {
@@ -145,15 +152,15 @@ const addEmployee = async () => {
         if (response.manager !== 'n/a') {
             const indexR = roles.findIndex((element) => element.title === response.role)
             const indexM = employees.findIndex((element) => `${element.first_name} ${element.last_name}` === response.manager)
-            pool.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ($1, $2, $3, $4);', [response.first, response.last, roles[indexR].id, employees[indexM].id]);
+            pool.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ($1, $2, $3, $4);`, [response.first, response.last, roles[indexR].id, employees[indexM].id]);
         }
         else {
             const indexR = roles.findIndex((element) => element.title === response.role)
-            pool.query('INSERT INTO employee (first_name, last_name, role_id) VALUES ($1, $2, $3);', [response.first, response.last, roles[indexR].id]);
+            pool.query(`INSERT INTO employee (first_name, last_name, role_id) VALUES ($1, $2, $3);`, [response.first, response.last, roles[indexR].id]);
         }
         console.log(`Employee: ${response.first} ${response.last} added.`)
         proceed();
-    });
+    })};
 };
 
 const updateEmployee = async () => {
@@ -189,7 +196,6 @@ const updateEmployee = async () => {
     console.log(`Employee role updated.`)
         proceed();
 };
-
 
 const proceed = () => {init()}
 
