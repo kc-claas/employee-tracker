@@ -17,7 +17,7 @@ You will need to have node.js and postgres installed to use this application. To
 ## Usage
 Prior to using the application, you'll need to have your database created. To do this, from the root directory open postgres in the terminal and enter '\i db/schema.sql' to create your database. Note that this will delete any existing employee_roster database, so only do this if you're sure you want to start your database over from scratch. 
 
-To use the application, open the root directory in your terminal and enter 'npm run start' to compile the code and run the application. You will be prompted to select which actions you which to perform on your database. After each action, you'll be brought back to this menu, and you can exit the application by choosing the 'exit' option. A brief demonstration of the applications usage can be found [here](https://drive.google.com/file/d/1QzCXGhejaHi7_2Jrde4rVLTDpMZyRHjN/view).
+To use the application, open the root directory in your terminal and enter 'npm run start' to compile the code and run the application. You will be prompted to select which actions you which to perform on your database. After each action, you'll be brought back to this menu, and you can exit the application by choosing the 'exit' option. A brief demonstration of the applications usage can be found [here](https://drive.google.com/file/d/1QzCXGhejaHi7_2Jrde4rVLTDpMZyRHjN/view?usp=sharing).
 
 ## License
 This application is covered under the [MIT](./LICENSE) license
